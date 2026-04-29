@@ -1,9 +1,15 @@
 
+import http from 'http';
 import { WebSocketServer } from 'ws';
 import { v4 as uuid } from 'uuid';
 
 const PORT = process.env.PORT || 8080;
-const wss = new WebSocketServer({ port: PORT });
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end("Backend is running");
+});
+
+const wss = new WebSocketServer({ server });
 
 const users = new Map(); // ws -> {id, name, status}
 const queue = [];
@@ -99,4 +105,6 @@ wss.on('connection', (ws) => {
   broadcastLobby();
 });
 
-console.log('Backend running on', PORT);
+server.listen(PORT, () => {
+  console.log('Backend running on', PORT);
+});
